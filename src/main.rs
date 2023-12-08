@@ -19,6 +19,7 @@ fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    ass: Res<AssetServer>
 ) {
     // circular base
     commands.spawn(PbrBundle {
@@ -27,13 +28,24 @@ fn setup(
         transform: Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
         ..default()
     });
-    // cube
+
+    // circular base
     commands.spawn(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
-        material: materials.add(Color::rgb_u8(124, 144, 255).into()),
-        transform: Transform::from_xyz(0.0, 0.5, 0.0),
+        mesh: meshes.add(shape::Circle::new(4.0).into()),
+        material: materials.add(Color::WHITE.into()),
+        transform: Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
         ..default()
     });
+    
+    // note that we have to include the `Scene0` label
+    let tree = ass.load("assets.glb#Scene3");
+
+    commands.spawn(SceneBundle {
+        scene: tree,
+        transform: Transform::from_xyz(0.0, 0.0, 0.0),
+        ..Default::default()
+    });
+
     // light
     commands.spawn(PointLightBundle {
         point_light: PointLight {
