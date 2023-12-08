@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use bevy::math::*;
 
+use crate::shooter::TriggerShotEvent;
+
 const ROTATE_SPEED : f32 = 0.5;
 const MOVEMENT_SPEED : f32 = 5.0;
 // Q Yaw left
@@ -48,5 +50,19 @@ pub fn keyboard_movements(
 	if keyboard_input.pressed(KeyCode::S) {
 		let r = camera_transform.right();
 		camera_transform.rotate_axis(r, -rot_amount);
+	}
+}
+
+pub fn shoot_trigger (
+	keyboard_input: Res<Input<KeyCode>>,
+	mut event_writer: EventWriter<TriggerShotEvent>,
+	camera_transform: Query<&Transform, With<Camera3d>>
+){
+	let camera_transform = camera_transform.single();
+	if keyboard_input.pressed(KeyCode::Space) {
+		event_writer.send(TriggerShotEvent {
+			direction: camera_transform.clone(),
+			magnitude: 15.0
+		});
 	}
 }
