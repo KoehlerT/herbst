@@ -9,6 +9,7 @@ mod tree;
 
 fn main() {
     App::new()
+        .insert_resource(ClearColor(Color::rgb(0.21, 0.26, 0.32)))
         .add_plugins((DefaultPlugins, WorldInspectorPlugin::new()))
 		.add_plugins((shooter::ShooterPlugin, floor::FloorPlugin, tree::TreePlugin))
         .add_plugins((RapierPhysicsPlugin::<NoUserData>::default(), RapierDebugRenderPlugin::default()))

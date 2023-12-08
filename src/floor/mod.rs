@@ -31,7 +31,7 @@ fn setup_floor (
 ){
 	commands.spawn(PbrBundle {
         mesh: meshes.add(shape::Circle::new(6.0).into()),
-        material: materials.add(Color::YELLOW_GREEN.into()),
+        material: materials.add(Color::WHITE.into()),
         transform: Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
         ..default()
     }).insert((
