@@ -32,11 +32,16 @@ fn spawn_ball(
 		..default()
 	}).insert((
 		RigidBody::Dynamic,
-		GravityScale(0.5),
+		GravityScale(1.0),
 		Velocity {
 			linvel: event.direction.forward() * event.magnitude,
 			angvel: Vec3::new(0.2, 0.0, 0.0),
 		},
-		Collider::ball(0.5)
+		Collider::ball(0.5),
+		super::BallMarker,
+		Restitution {
+			coefficient: 0.7,
+			combine_rule: CoefficientCombineRule::Average,
+		}
 	));
 }

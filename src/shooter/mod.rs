@@ -17,6 +17,9 @@ pub struct CooldownTimer{
 	timer: Timer
 }
 
+#[derive(Component)]
+pub struct BallMarker;
+
 impl Plugin for ShooterPlugin {
 	fn build(&self, app: &mut App) {
 		app.add_systems(Startup, camera::spawn_camera)
