@@ -33,19 +33,21 @@ pub fn launch_ball (
 			info!("Launch!");
 			timer.timer.unpause();
 			// spawn_ball(&mut commands, &mut meshes, &mut materials, &event);
-			let (ball, mut gravity, mut transform) = ball_query.single_mut();
-			gravity.0 = 1.;
-			transform.translation = event.direction.translation + event.direction.up()*BALL_OFFSET.y + event.direction.back()*BALL_OFFSET.z;
-			commands.entity(ball).insert((
-				Velocity {
-					linvel: event.direction.forward() * event.magnitude,
-					angvel: Vec3::new(0.2, 0.0, 0.0),
-				},
-			));
-			commands.entity(ball).remove::<Parent>();
-			commands.entity(ball).remove::<ReloadedBall>();
-			timer.timer.reset();
-			commands.run_system(play_animation.0);
+			if let Some((ball, mut gravity, mut transform)) = ball_query.get_single_mut() {
+				gravity.0 = 1.;
+				transform.translation = event.direction.translation + event.direction.up()*BALL_OFFSET.y + event.direction.back()*BALL_OFFSET.z;
+				commands.entity(ball).insert((
+					Velocity {
+						linvel: event.direction.forward() * event.magnitude,
+						angvel: Vec3::new(0.2, 0.0, 0.0),
+					},
+				));
+				commands.entity(ball).remove::<Parent>();
+				commands.entity(ball).remove::<ReloadedBall>();
+				timer.timer.reset();
+				commands.run_system(play_animation.0);
+			}
+			
 		}
 		
 	}
