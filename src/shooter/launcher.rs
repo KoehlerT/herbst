@@ -30,7 +30,6 @@ pub fn launch_ball (
 ) {
 	for event in event_reader.read() {
 		if timer.timer.paused() {
-			info!("Launch!");
 			timer.timer.unpause();
 			// spawn_ball(&mut commands, &mut meshes, &mut materials, &event);
 			if let Ok((ball, mut gravity, mut transform)) = ball_query.get_single_mut() {
@@ -59,7 +58,6 @@ fn spawn_ball(
     materials: &mut ResMut<Assets<StandardMaterial>>,
 	parent: Entity
 ){
-	info!("Spawn");
 	let ball_id = commands.spawn(PbrBundle {
 		mesh: meshes.add(Mesh::from(shape::UVSphere { radius: BALL_RADIUS, ..default() })),
 		material: materials.add(Color::rgb_u8(124, 144, 255).into()),
