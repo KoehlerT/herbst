@@ -1,10 +1,15 @@
 
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
+use bevy_rapier3d::prelude::*;
+
+mod shooter;
 
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, WorldInspectorPlugin::new()))
+		.add_plugins(shooter::ShooterPlugin)
+        .add_plugins((RapierPhysicsPlugin::<NoUserData>::default(), RapierDebugRenderPlugin::default()))
         .add_systems(Startup, setup)
         .run();
 }
@@ -37,11 +42,6 @@ fn setup(
             ..default()
         },
         transform: Transform::from_xyz(4.0, 8.0, 4.0),
-        ..default()
-    });
-    // camera
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(-2.5, 4.5, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
         ..default()
     });
 }
