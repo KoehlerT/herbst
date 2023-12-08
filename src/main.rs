@@ -5,13 +5,14 @@ use bevy_rapier3d::prelude::*;
 
 mod shooter;
 mod floor;
+mod ui;
 mod tree;
 
 fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.21, 0.26, 0.32)))
         .add_plugins((DefaultPlugins, WorldInspectorPlugin::new()))
-		.add_plugins((shooter::ShooterPlugin, floor::FloorPlugin, tree::TreePlugin))
+		.add_plugins((shooter::ShooterPlugin, floor::FloorPlugin, ui::UiPlugin, tree::TreePlugin))
         .add_plugins((RapierPhysicsPlugin::<NoUserData>::default(), RapierDebugRenderPlugin::default()))
         .add_systems(Startup, setup)
         .run();
