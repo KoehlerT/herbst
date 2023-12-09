@@ -40,7 +40,6 @@ pub fn launch_ball (
 						linvel: event.direction.forward() * event.magnitude,
 						angvel: Vec3::new(0.2, 0.0, 0.0),
 					},
-					ActiveEvents::COLLISION_EVENTS,
 				));
 				commands.entity(ball).remove::<Parent>();
 				commands.entity(ball).remove::<ReloadedBall>();
@@ -70,9 +69,10 @@ fn spawn_ball(
 		super::BallMarker,
 		GravityScale(0.),
 		Restitution {
-			coefficient: 0.7,
+			coefficient: 0.5,
 			combine_rule: CoefficientCombineRule::Average,
 		},
+		ActiveEvents::COLLISION_EVENTS,
 		ReloadedBall
 	)).id();
 	commands.entity(parent).add_child(ball_id);

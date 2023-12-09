@@ -1,4 +1,4 @@
-use bevy::{prelude::*, render::mesh::MeshVertexAttribute, gltf::GltfMesh, utils::tracing::field::Empty};
+use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use rand::Rng;
 
@@ -9,12 +9,11 @@ impl Plugin for TreePlugin {
 		app.add_systems(Startup, setup_tree)
 			.add_systems(Startup, spawn_flying_leaves)
 			.add_systems(Update, (spawn_leaves, update_flying_leaves, add_leaf_colliders, handle_leaf_collisions));
-			// .add_systems(Update, (floor_hits, ball_land_event_handler))
-			// .add_event::<BallLandEvent>();
 	}
 }
 
 const FLYING_LEAVES_COUNT: u32 = 350;
+const LEAF_PROBABILITY : f32 = 0.8;
 
 #[derive(Resource)]
 struct LeafMeshHandle(Handle<Mesh>);
@@ -89,13 +88,13 @@ fn update_flying_leaves(
 pub struct LeafMarker;
 
 fn spawn_leaves(
-	mut meshes: Query<(&Handle<Mesh>, &mut Tree), With<Tree>>,
+	mut meshes: Query<(Entity, &Handle<Mesh>, &mut Tree), With<Tree>>,
 	mesh_assets: ResMut<Assets<Mesh>>,
 	ass: Res<AssetServer>,
     mut commands: Commands,
 ) {
 
-	for (mesh_handle, mut tree) in meshes.iter_mut() {
+	for (tree_entity, mesh_handle, mut tree) in meshes.iter_mut() {
 		if tree.has_leaves {
 			continue;
 		}
@@ -105,9 +104,11 @@ fn spawn_leaves(
 			let leaf = ass.load("assets.glb#Scene2");
 
 			if let Some(vertices) = mesh.attribute(Mesh::ATTRIBUTE_POSITION) {
+				#[allow(for_loops_over_fallibles)]
 				for v in vertices.as_float3() {
 					for vv in v {
 
+						if rand::thread_rng().gen::<f32>() < LEAF_PROBABILITY {continue;}
 						if vv[1] < 2.0 {continue};
 
 						let x = vv[0] + rand::thread_rng().gen_range(-0.15..0.15) as f32;
@@ -127,6 +128,13 @@ fn spawn_leaves(
  
 				}
 				tree.has_leaves = true;
+			}
+			// add tree collider
+			if let Some(collider) = Collider::from_bevy_mesh(mesh, &ComputedColliderShape::TriMesh) {
+				commands.entity(tree_entity).insert((
+					collider,
+					RigidBody::Fixed
+				));
 			}
 		};
     }
@@ -167,6 +175,7 @@ fn handle_leaf_collisions(
 	mut commands: Commands
 ) {
 	for collision_event in collision_events.read() {
+		
 		match collision_event {
 			CollisionEvent::Started(a, b,_) => {
 				if leaves.contains(*a) {make_leaf_falling(a, &mut commands);}

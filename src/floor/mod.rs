@@ -24,7 +24,7 @@ pub struct LeafLandEvent {
 impl Plugin for FloorPlugin {
 	fn build(&self, app: &mut App) {
 		app.add_systems(Startup, setup_floor)
-			.add_systems(Update, (floor_hits, ball_land_event_handler, leaf_land_event_handler))
+			.add_systems(Update, (floor_hits, ball_land_event_handler.after(floor_hits), leaf_land_event_handler.after(floor_hits)))
 			.add_event::<BallLandEvent>()
 			.add_event::<LeafLandEvent>();
 	}
