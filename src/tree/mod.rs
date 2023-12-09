@@ -21,7 +21,7 @@ impl Plugin for TreePlugin {
 }
 
 const FLYING_LEAVES_COUNT: u32 = 350;
-const LEAF_PROBABILITY : f32 = 0.8;
+const LEAF_PROBABILITY : f32 = 0.5;
 
 #[derive(Resource)]
 struct LeafMeshHandle(Handle<Mesh>);
@@ -128,7 +128,7 @@ fn spawn_leaves(
 				for v in vertices.as_float3() {
 					for vv in v {
 
-						if rand::thread_rng().gen::<f32>() < LEAF_PROBABILITY {continue;}
+						if rand::thread_rng().gen::<f32>() > LEAF_PROBABILITY {continue;}
 						if vv[1] < 2.0 {continue};
 
 						let x = vv[0] + rand::thread_rng().gen_range(-0.15..0.15) as f32;

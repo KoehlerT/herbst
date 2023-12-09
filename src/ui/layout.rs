@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::game::Score;
+
 pub const NORMAL_BUTTON: Color = Color::rgb(0.79, 0.3, 0.3);
 pub const HOVERED_BUTTON: Color = Color::GRAY;
 
@@ -139,9 +141,10 @@ pub fn create_startmenu_ui(
 						color: Color::rgb(0.79, 0.3, 0.3),
 				}),
 				TextSection::new(
-					"\n\nOh no - look - the leaves are not moving anymore - the wind froze them!
-					But this tree need to get rid of its leaves to survive the winter.
-					Help him by shooting down as many leaves as possible with your snowball crossbow.
+					"\n\n
+					Oh no - look - the leaves are not moving\nanymore - the wind froze them!
+					But this tree need to get rid of its leaves to\nsurvive the winter.
+					Help him by shooting down as many leaves\nas possible with your snowball crossbow.
 					Hurry, you only have 30 seconds!
 				
 					WASDQE to move, SPACE to shoot".to_string(),
@@ -186,8 +189,15 @@ pub fn create_startmenu_ui(
 
 
 pub fn create_endscreen_ui(
-	mut commands: Commands
+	mut commands: Commands,
+	score: Res<Score>,
 ) {
+
+	let mut message = "Your Score: ".to_owned();
+	message += &format!("{:#}", score.value);
+	message += "\n";
+	message += &generate_gameover_message(score);
+
 	let entity = commands.spawn(NodeBundle {
 		style: Style { 
 			display: Display::Flex,
@@ -223,19 +233,13 @@ pub fn create_endscreen_ui(
 		}).with_children(|builder| {
 			builder.spawn(TextBundle::from_sections([
 				TextSection::new(
-					"Endscreen".to_string(),
+					"Game Over\n\n".to_string(),
 					TextStyle {
 						font: Default::default(),
 						font_size: 48.0,
 						color: Color::rgb(0.79, 0.3, 0.3),
 				}),
-				TextSection::new(
-					"\n\nOh no - look - the leaves are not moving anymore - the wind froze them!
-					But this tree need to get rid of its leaves to survive the winter.
-					Help him by shooting down as many leaves as possible with your snowball crossbow.
-					Hurry, you only have 30 seconds!
-				
-					WASDQE to move, SPACE to shoot".to_string(),
+				TextSection::new(message,
 					TextStyle {
 						font: Default::default(),
 						font_size: 40.0,
@@ -295,4 +299,14 @@ pub fn hide_endscreen_ui(
 	endscreen_data: Res<EndScreenData>
 ) {
     commands.entity(endscreen_data.entity).despawn_recursive();
+}
+
+fn generate_gameover_message(score: Res<Score>) -> String {
+	let percentage = score.value as f32 / score.leave_count as f32;
+	if percentage >= 1. {"Wow - how did you do that?".into()}
+	else if percentage >= 0.9 {"The winter is gonna be a breeze".into()}
+	else if percentage >= 0.75 {"That's alright :-)".into()}
+	else if percentage >= 0.5 {"Don't leaf me like this".into()}
+	else if percentage >= 0.2 {"I'm trembling like aspen leaves".into()}
+	else {"Oh no, that's gonna be cold!".into()}
 }
