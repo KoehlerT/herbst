@@ -2,11 +2,18 @@ use bevy::{prelude::*, render::mesh::MeshVertexAttribute, gltf::GltfMesh, utils:
 use bevy_rapier3d::prelude::*;
 use rand::Rng;
 
+use crate::game::AppState;
+
 pub struct TreePlugin;
 
 impl Plugin for TreePlugin {
 	fn build(&self, app: &mut App) {
-		app.add_systems(Startup, setup_tree)
+		app
+			.add_systems(Startup, setup_tree)
+			.add_systems(OnExit(AppState::EndScreen), remove_tree)
+			.add_systems(OnExit(AppState::EndScreen), despawn_leaves)
+			.add_systems(OnExit(AppState::EndScreen), setup_tree)
+			.add_systems(OnExit(AppState::EndScreen), spawn_flying_leaves)
 			.add_systems(Startup, spawn_flying_leaves)
 			.add_systems(Update, (spawn_leaves, update_flying_leaves, /*add_leaf_colliders,*/ handle_leaf_collisions));
 			// .add_systems(Update, (floor_hits, ball_land_event_handler))
@@ -35,8 +42,18 @@ fn setup_tree (
 		material: tree_mat,
 		..Default::default()
 	}).insert(Tree{has_leaves:false});
-
 }
+
+fn remove_tree (
+	entities: Query<Entity, With<Tree>>,
+    mut commands: Commands,
+
+){
+	for entity in entities.iter() {
+		commands.entity(entity).despawn_recursive();
+	}
+}
+
 
 #[derive(Component)]
 struct Tree {
@@ -79,7 +96,7 @@ fn update_flying_leaves(
 	mut transforms: Query<&mut Transform, With<FlyingLeave>>
 ) {
 	for mut transform in transforms.iter_mut() {
-		transform.translate_around(Vec3::new(0., 0., 0.), Quat::from_rotation_y(0.01));
+		transform.translate_around(Vec3::new(0., 0., 0.), Quat::from_rotation_y(0.014));
 		transform.rotate_local_x(0.01);
 		transform.rotate_local_y(0.02);
 	}
@@ -138,6 +155,19 @@ fn spawn_leaf(transform: Transform, handle: &Handle<Scene>, commands: &mut Comma
 		transform: transform,
 		..Default::default()
 	});
+}
+
+
+fn despawn_leaves(
+	leaves: Query<(Entity, &Handle<Mesh>), Without<Children>>,
+	leaf_mesh_handle: Res<LeafMeshHandle>,
+	mut commands: Commands
+) {
+	for (leaf, handle) in leaves.iter() {
+		if *handle == leaf_mesh_handle.0 {
+			commands.entity(leaf).despawn_recursive();
+		}
+	}
 }
 
 fn add_leaf_colliders(

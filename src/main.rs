@@ -24,7 +24,7 @@ fn main() {
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugins(game::GameMangerPlugin)
         .add_systems(Startup, setup)
-        // .add_plugins(WorldInspectorPlugin::new())
+        .add_plugins(WorldInspectorPlugin::new())
         // .add_plugins(RapierDebugRenderPlugin::default())
         .run();
 }

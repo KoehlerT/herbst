@@ -1,6 +1,59 @@
 use bevy::prelude::*;
 
-use crate::game::{Score, RoundTime};
+use crate::game::{Score, RoundTime, AppState};
+
+use super::layout::{HOVERED_BUTTON, NORMAL_BUTTON};
+
+pub fn start_button_system(
+    mut interaction_query: Query<
+        (
+            &Interaction,
+            &mut BackgroundColor
+        ),
+        (Changed<Interaction>, With<Button>),
+    >,
+	mut state: ResMut<NextState<AppState>>
+) {
+    for (interaction, mut color) in &mut interaction_query {
+        match *interaction {
+            Interaction::Pressed => {
+                state.set(AppState::InGame);
+            }
+            Interaction::Hovered => {
+                *color = HOVERED_BUTTON.into();
+            }
+            Interaction::None => {
+                *color = NORMAL_BUTTON.into();
+            }
+        }
+    }
+}
+
+pub fn restart_button_system(
+    mut interaction_query: Query<
+        (
+            &Interaction,
+            &mut BackgroundColor
+        ),
+        (Changed<Interaction>, With<Button>),
+    >,
+	mut state: ResMut<NextState<AppState>>
+) {
+    for (interaction, mut color) in &mut interaction_query {
+        match *interaction {
+            Interaction::Pressed => {
+                state.set(AppState::InGame);
+            }
+            Interaction::Hovered => {
+                *color = HOVERED_BUTTON.into();
+            }
+            Interaction::None => {
+                *color = NORMAL_BUTTON.into();
+            }
+        }
+    }
+}
+
 
 pub fn increase_score_event_handler (
 	score: Res<Score>,
