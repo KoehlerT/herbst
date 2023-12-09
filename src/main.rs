@@ -1,8 +1,7 @@
 
-use bevy::prelude::*;
+use bevy::{prelude::*, window::PresentMode};
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_rapier3d::prelude::*;
-use game::GameMangerPlugin;
 
 mod shooter;
 mod floor;
@@ -13,11 +12,20 @@ mod game;
 fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.21, 0.26, 0.32)))
-        .add_plugins((DefaultPlugins, WorldInspectorPlugin::new()))
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                present_mode: PresentMode::AutoNoVsync, // Reduces input lag.
+                fit_canvas_to_parent: true,
+                ..default()
+            }),
+            ..default()
+        }))
 		.add_plugins((shooter::ShooterPlugin, floor::FloorPlugin, ui::UiPlugin, tree::TreePlugin))
-        .add_plugins((RapierPhysicsPlugin::<NoUserData>::default(), RapierDebugRenderPlugin::default()))
+        .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugins(game::GameMangerPlugin)
         .add_systems(Startup, setup)
+        // .add_plugins(WorldInspectorPlugin::new())
+        // .add_plugins(RapierDebugRenderPlugin::default())
         .run();
 }
 

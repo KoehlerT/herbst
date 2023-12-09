@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+
+<body>
+	<style>
+		html, body {
+			margin: 0;
+			height: 100%;
+		}
+		canvas:focus {
+			outline: none!important;
+		}
+	</style>
+
+	<script type="module">
+		import init from './herbst.js'
+
+		init().catch((error) => {
+		if (!error.message.startsWith("Using exceptions for control flow, don't mind me. This isn't actually an error!")) {
+			throw error;
+		}
+		});
+	</script>
+</body>
+
+</html>
