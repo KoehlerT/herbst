@@ -40,6 +40,7 @@ pub fn launch_ball (
 						linvel: event.direction.forward() * event.magnitude,
 						angvel: Vec3::new(0.2, 0.0, 0.0),
 					},
+					ActiveEvents::COLLISION_EVENTS,
 				));
 				commands.entity(ball).remove::<Parent>();
 				commands.entity(ball).remove::<ReloadedBall>();

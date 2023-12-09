@@ -1,12 +1,14 @@
-use std::f64::consts::PI;
-
 use bevy::prelude::*;
 use bevy::math::*;
 
 use crate::shooter::TriggerShotEvent;
 
+use super::ShooterPower;
+
 const ROTATE_SPEED : f32 = 0.5;
-const MOVEMENT_SPEED : f32 = 5.0;
+const LOADING_SPEED : f32 = 5.0;
+const MAX_LOAD: f32 = 30.0;
+const MIN_LOAD : f32 = 10.0;
 // Q Yaw left
 // E Yaw right
 // W Pitch up
@@ -51,13 +53,19 @@ pub fn keyboard_movements(
 pub fn shoot_trigger (
 	keyboard_input: Res<Input<KeyCode>>,
 	mut event_writer: EventWriter<TriggerShotEvent>,
-	camera_transform: Query<&Transform, With<Camera3d>>
+	camera_transform: Query<&Transform, With<Camera3d>>,
+	time: Res<Time>,
+	mut power: ResMut<ShooterPower>
 ){
 	let camera_transform = camera_transform.single();
 	if keyboard_input.pressed(KeyCode::Space) {
+		power.0 += time.delta_seconds() * LOADING_SPEED;
+		if power.0 > MAX_LOAD {power.0 = MIN_LOAD;}
+	}
+	if keyboard_input.just_released(KeyCode::Space) {
 		event_writer.send(TriggerShotEvent {
 			direction: camera_transform.clone(),
-			magnitude: 15.0
+			magnitude: power.0
 		});
 	}
 }

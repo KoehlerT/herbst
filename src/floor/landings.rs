@@ -15,3 +15,14 @@ pub fn ball_land_event_handler
 		score.value += 1;
 	}
 }
+
+pub fn leaf_land_event_handler(
+	mut event_reader: EventReader<LeafLandEvent>,
+	mut commands: Commands,
+	mut score: ResMut<Score>
+){
+	for event in event_reader.read() {
+		commands.entity(event.leaf).despawn_recursive();
+		score.value += 1;
+	}
+}

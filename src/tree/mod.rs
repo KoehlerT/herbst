@@ -8,7 +8,7 @@ impl Plugin for TreePlugin {
 	fn build(&self, app: &mut App) {
 		app.add_systems(Startup, setup_tree)
 			.add_systems(Startup, spawn_flying_leaves)
-			.add_systems(Update, (spawn_leaves, update_flying_leaves, /*add_leaf_colliders,*/ handle_leaf_collisions));
+			.add_systems(Update, (spawn_leaves, update_flying_leaves, add_leaf_colliders, handle_leaf_collisions));
 			// .add_systems(Update, (floor_hits, ball_land_event_handler))
 			// .add_event::<BallLandEvent>();
 	}
@@ -86,7 +86,7 @@ fn update_flying_leaves(
 }
 
 #[derive(Component)]
-struct LeafMarker;
+pub struct LeafMarker;
 
 fn spawn_leaves(
 	mut meshes: Query<(&Handle<Mesh>, &mut Tree), With<Tree>>,
@@ -140,35 +140,30 @@ fn spawn_leaf(transform: Transform, handle: &Handle<Scene>, commands: &mut Comma
 	});
 }
 
+#[derive(Component)]
+struct HandledAddColider;
+
 fn add_leaf_colliders(
-	leaves: Query<(Entity, &Handle<Mesh>), Without<Children>>,
-	mesh_assets: ResMut<Assets<Mesh>>,
+	leaves: Query<(Entity, &Handle<Mesh>), Without<HandledAddColider>>,
 	leaf_mesh_handle: Res<LeafMeshHandle>,
 	mut commands: Commands
 ) {
 	for (leaf, handle) in leaves.iter() {
 		if *handle == leaf_mesh_handle.0 {
-			if let Some(mesh) = mesh_assets.get(handle) {
-				if let Some(mut collider) = Collider::from_bevy_mesh(mesh, &ComputedColliderShape::ConvexHull) {
-					collider.set_scale(Vec3::splat(1.), 1);
-					let physics = commands.spawn(VisibilityBundle::default()).id();
-
-					commands.entity(leaf).insert((
-						collider,
-						ColliderMassProperties::Density(0.1),
-						RigidBody::Fixed,
-						ActiveEvents::COLLISION_EVENTS,
-						LeafMarker
-					)).add_child(physics);
-				};
-			}
+			commands.entity(leaf).insert((
+				Collider::cuboid(0.05, 0.01, 0.08),
+				ColliderMassProperties::Density(0.1),
+				RigidBody::Fixed,
+				LeafMarker
+			));
 		}
+		commands.entity(leaf).insert(HandledAddColider);
 	}
 }
 
 fn handle_leaf_collisions(
 	mut collision_events: EventReader<CollisionEvent>,
-	leaves: Query<Entity, With<LeafMarker>>,
+	leaves: Query<Entity, (With<LeafMarker>, Without<ActiveEvents>)>,
 	mut commands: Commands
 ) {
 	for collision_event in collision_events.read() {
@@ -183,10 +178,9 @@ fn handle_leaf_collisions(
 }
 
 fn make_leaf_falling(entity: &Entity, commands: &mut Commands) {
-	info!("Fall down!");
-	commands.entity(*entity).remove::<RigidBody>();
 	commands.entity(*entity).insert((
 		RigidBody::Dynamic,
-		GravityScale(1.0)
+		GravityScale(1.0),
+		ActiveEvents::COLLISION_EVENTS,
 	));
 }

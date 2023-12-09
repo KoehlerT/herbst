@@ -16,11 +16,17 @@ pub struct BallLandEvent {
 	ball: Entity
 }
 
+#[derive(Event)]
+pub struct LeafLandEvent {
+	leaf: Entity
+}
+
 impl Plugin for FloorPlugin {
 	fn build(&self, app: &mut App) {
 		app.add_systems(Startup, setup_floor)
-			.add_systems(Update, (floor_hits, ball_land_event_handler))
-			.add_event::<BallLandEvent>();
+			.add_systems(Update, (floor_hits, ball_land_event_handler, leaf_land_event_handler))
+			.add_event::<BallLandEvent>()
+			.add_event::<LeafLandEvent>();
 	}
 }
 
