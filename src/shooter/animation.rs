@@ -20,7 +20,6 @@ pub fn setup_scene_once_loaded(
 ) {
 	let mut i = 0;
     for (mut player, _parent) in &mut players {
-		info!("parent {:?}",_parent);
 		player.play(animations.0[i].clone_weak());
 		player.set_speed(2.);
 		i = i+1;

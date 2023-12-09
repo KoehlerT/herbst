@@ -30,13 +30,17 @@ fn setup_floor (
     mut materials: ResMut<Assets<StandardMaterial>>,
 ){
 	commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Circle::new(6.0).into()),
+        mesh: meshes.add(shape::Cylinder{
+            radius: 5.0,
+            height: 0.2,
+            resolution: 64,
+            segments: 1,
+        }.into()),
         material: materials.add(Color::WHITE.into()),
-        transform: Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
         ..default()
     }).insert((
 		RigidBody::Fixed,
-		Collider::cuboid(6.0, 6.0, 0.1),
+		Collider::cuboid(5.0, 0.2, 5.0),
 		Friction::coefficient(0.7),
 		ActiveEvents::COLLISION_EVENTS,
 		FloorMarker
