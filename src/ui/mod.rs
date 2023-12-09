@@ -4,7 +4,7 @@ pub struct UiPlugin;
 mod layout;
 mod systems;
 
-use crate::game::{Score, AppState};
+use crate::game::AppState;
 
 #[derive(Component)]
 pub struct ScoreMarker;

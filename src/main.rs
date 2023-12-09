@@ -1,6 +1,5 @@
 
 use bevy::{prelude::*, window::PresentMode};
-use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_rapier3d::prelude::*;
 
 mod shooter;
@@ -24,8 +23,6 @@ fn main() {
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugins(game::GameMangerPlugin)
         .add_systems(Startup, setup)
-        .add_plugins(WorldInspectorPlugin::new())
-        // .add_plugins(RapierDebugRenderPlugin::default())
         .run();
 }
 

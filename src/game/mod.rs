@@ -10,7 +10,8 @@ pub enum AppState {
 
 #[derive(Resource)]
 pub struct Score {
-	pub value: i32
+	pub value: i32,
+	pub leave_count: i32
 }
 #[derive(Resource)]
 pub struct RoundTime {
@@ -24,7 +25,7 @@ impl Plugin for GameMangerPlugin {
 		app
 			.add_systems(OnEnter(AppState::InGame), reset_state)
 			.insert_resource(RoundTime{value: 10.})
-			.insert_resource(Score{value: 0})
+			.insert_resource(Score{value: 0, leave_count: 0})
 			.add_systems(Update, update_time.run_if(in_state(AppState::InGame)))
 			.add_state::<AppState>();
 	}
@@ -52,4 +53,12 @@ pub fn update_time(
 	round_time.value -= time.delta_seconds();
 }
 
-
+fn generate_gameover_message(score: &Score) -> String {
+	let percentage = score.value as f32 / score.leave_count as f32;
+	if percentage >= 1. {"Wow - how did you do that?".into()}
+	else if percentage >= 0.9 {"The winter is gonna be a breeze".into()}
+	else if percentage >= 0.75 {"That's alright :-)".into()}
+	else if percentage >= 0.5 {"Don't leaf me like this".into()}
+	else if percentage >= 0.2 {"I'm trembling like aspen leaves".into()}
+	else {"Oh no, that's gonna be cold!".into()}
+}
