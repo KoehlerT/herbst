@@ -1,5 +1,5 @@
 
-use bevy::{prelude::*, window::PresentMode};
+use bevy::{prelude::*, window::PresentMode, asset::AssetMetaCheck};
 use bevy_rapier3d::prelude::*;
 
 mod shooter;
@@ -10,6 +10,7 @@ mod game;
 
 fn main() {
     App::new()
+        .insert_resource(AssetMetaCheck::Never)
         .insert_resource(ClearColor(Color::rgb(0.21, 0.26, 0.32)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
