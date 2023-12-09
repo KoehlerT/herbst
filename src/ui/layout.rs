@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-pub fn create_ui(
+pub fn create_game_ui(
 	mut commands: Commands
 ) {
 	commands.spawn(NodeBundle {
