@@ -60,7 +60,7 @@ fn spawn_ball(
 	info!("Spawn");
 	let ball_id = commands.spawn(PbrBundle {
 		mesh: meshes.add(Mesh::from(shape::UVSphere { radius: BALL_RADIUS, ..default() })),
-		material: materials.add(Color::rgb_u8(124, 144, 255).into()),
+		material: materials.add(Color::WHITE.into()),
 		transform: Transform {translation: BALL_OFFSET, ..default()},
 		..default()
 	}).insert((

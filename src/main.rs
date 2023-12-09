@@ -2,11 +2,13 @@
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_rapier3d::prelude::*;
+use game::GameMangerPlugin;
 
 mod shooter;
 mod floor;
 mod ui;
 mod tree;
+mod game;
 
 fn main() {
     App::new()
@@ -14,6 +16,7 @@ fn main() {
         .add_plugins((DefaultPlugins, WorldInspectorPlugin::new()))
 		.add_plugins((shooter::ShooterPlugin, floor::FloorPlugin, ui::UiPlugin, tree::TreePlugin))
         .add_plugins((RapierPhysicsPlugin::<NoUserData>::default(), RapierDebugRenderPlugin::default()))
+        .add_plugins(game::GameMangerPlugin)
         .add_systems(Startup, setup)
         .run();
 }

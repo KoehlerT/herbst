@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::ui::Score;
+use crate::game::Score;
 
 use super::*;
 

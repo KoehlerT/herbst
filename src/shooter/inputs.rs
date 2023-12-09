@@ -20,9 +20,9 @@ pub fn keyboard_movements(
 	let mut camera_transform = camera_transform.single_mut();
 
 	// if keyboard_input.pressed(KeyCode::W) { input_dir.z = 1.;}
-	if keyboard_input.pressed(KeyCode::A) { input_dir.x = -1.;}
+	if keyboard_input.pressed(KeyCode::D) { input_dir.x = -1.;}
 	// if keyboard_input.pressed(KeyCode::S) { input_dir.z = -1.;}
-	if keyboard_input.pressed(KeyCode::D) { input_dir.x = 1.;}
+	if keyboard_input.pressed(KeyCode::A) { input_dir.x = 1.;}
 
 	// let r = Vec3::abs(camera_transform.translation);
 	// let alpha = arctan(camera_transform.translation.y / camera_transform.translation.x);
@@ -33,7 +33,7 @@ pub fn keyboard_movements(
 		let dir : Vec3 = copy.left();
 		let move_dir = dir * input_dir.x; 
 		camera_transform.translation += move_dir * MOVEMENT_SPEED * time.delta().as_secs_f32();
-		camera_transform.look_at(Vec3::ZERO, Vec3::Y);
+		// camera_transform.look_at(Vec3::ZERO, Vec3::Y);
 	}	
 
 	let rot_amount = ROTATE_SPEED * time.delta_seconds();

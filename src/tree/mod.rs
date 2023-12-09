@@ -1,5 +1,4 @@
 use bevy::{prelude::*, render::mesh::MeshVertexAttribute, gltf::GltfMesh};
-use bevy_rapier3d::prelude::*;
 use rand::Rng;
 
 pub struct TreePlugin;
@@ -7,9 +6,8 @@ pub struct TreePlugin;
 impl Plugin for TreePlugin {
 	fn build(&self, app: &mut App) {
 		app.add_systems(Startup, setup_tree)
+			.add_systems(Startup, spawn_flying_leaves)
 			.add_systems(Update, spawn_leaves);
-			// .add_systems(Update, (floor_hits, ball_land_event_handler))
-			// .add_event::<BallLandEvent>();
 	}
 }
 
@@ -19,7 +17,6 @@ fn setup_tree (
 	mut commands: Commands,
 	ass: Res<AssetServer>
 ){
-    let leave = ass.load("assets.glb#Scene2");
 
 	let tree: Handle<Mesh> = ass.load("assets.glb#Mesh8/Primitive0");
 	let tree_mat: Handle<StandardMaterial> = ass.load("assets.glb#Material0");
@@ -30,7 +27,19 @@ fn setup_tree (
 		..Default::default()
 	}).insert(IsTree{has_leaves:false});
 
-	// flying leaves
+}
+
+#[derive(Component)]
+struct IsTree {
+	has_leaves: bool
+}
+
+fn spawn_flying_leaves(
+	mut commands: Commands,
+	ass: Res<AssetServer>
+) {
+	let leave = ass.load("assets.glb#Scene2");
+
 	for _i in 0..FLYING_LEAVES_COUNT {
 		let x = rand::thread_rng().gen_range(-10..10) as f32;
 		let y = rand::thread_rng().gen_range(0.3..10.0) as f32;
@@ -47,20 +56,12 @@ fn setup_tree (
 
 		commands.spawn(SceneBundle {
 			scene: leave.clone(),
-			transform: transform.with_scale(Vec3::splat(0.5)),
+			transform: transform,
 			..Default::default()
 		});
 	}
-
 }
 
-#[derive(Component)]
-struct IsTree {
-	has_leaves: bool
-}
-
-#[derive(Component)]
-struct FoundTree {}
 
 fn spawn_leaves(
 	mut meshes: Query<(&Handle<Mesh>, &mut IsTree), With<IsTree>>,
@@ -98,7 +99,7 @@ fn spawn_leaves(
 						);
 						commands.spawn(SceneBundle {
 							scene: leaf.clone(),
-							transform: transform.with_scale(Vec3::splat(0.5)),
+							transform: transform,
 							..Default::default()
 						});
 					}
