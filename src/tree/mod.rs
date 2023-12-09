@@ -2,6 +2,8 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 use rand::Rng;
 
+use crate::game::Score;
+
 pub struct TreePlugin;
 
 impl Plugin for TreePlugin {
@@ -92,6 +94,7 @@ fn spawn_leaves(
 	mesh_assets: ResMut<Assets<Mesh>>,
 	ass: Res<AssetServer>,
     mut commands: Commands,
+	mut leave_count: ResMut<Score>
 ) {
 
 	for (tree_entity, mesh_handle, mut tree) in meshes.iter_mut() {
@@ -99,6 +102,7 @@ fn spawn_leaves(
 			continue;
 		}
 		
+		leave_count.leave_count = 0;
 		if let Some(mesh) = mesh_assets.get(mesh_handle) {
 
 			let leaf = ass.load("assets.glb#Scene2");
@@ -124,6 +128,7 @@ fn spawn_leaves(
 							)
 						);
 						spawn_leaf(transform, &leaf, &mut commands);
+						leave_count.leave_count += 1;
 					}
  
 				}
