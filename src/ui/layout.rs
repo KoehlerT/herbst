@@ -303,9 +303,9 @@ pub fn hide_endscreen_ui(
 
 fn generate_gameover_message(score: Res<Score>) -> String {
 	let percentage = score.value as f32 / score.leave_count as f32;
-	if percentage >= 1. {"Wow - how did you do that?".into()}
-	else if percentage >= 0.9 {"The winter is gonna be a breeze".into()}
-	else if percentage >= 0.75 {"That's alright :-)".into()}
+	if percentage >= 0.85 {"Wow - how did you do that?".into()}
+	else if percentage >= 0.7 {"The winter is gonna be a breeze".into()}
+	else if percentage >= 0.6 {"That's alright :-)".into()}
 	else if percentage >= 0.5 {"Don't leaf me like this".into()}
 	else if percentage >= 0.2 {"I'm trembling like aspen leaves".into()}
 	else {"Oh no, that's gonna be cold!".into()}

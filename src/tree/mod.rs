@@ -4,6 +4,7 @@ use rand::Rng;
 
 use crate::game::AppState;
 use crate::game::Score;
+use crate::shooter::BallMarker;
 
 pub struct TreePlugin;
 
@@ -46,10 +47,11 @@ fn setup_tree (
 
 fn remove_tree (
 	entities: Query<Entity, With<Tree>>,
+	balls: Query<Entity, With<BallMarker>>,
     mut commands: Commands,
 
 ){
-	for entity in entities.iter() {
+	for entity in entities.iter().chain(balls.iter()) {
 		commands.entity(entity).despawn_recursive();
 	}
 }
